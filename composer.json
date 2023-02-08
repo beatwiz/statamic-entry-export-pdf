@@ -8,7 +8,7 @@
     },
     "autoload": {
         "psr-4": {
-            "beatwiz\\statamic-entry-export-pdf\\": "src"
+            "beatwiz\\EntryExportPDF\\": "src"
         }
     },
     "authors": [
