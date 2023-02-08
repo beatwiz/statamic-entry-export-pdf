@@ -1,0 +1,33 @@
+{
+    "name": "beatwiz/statamic-entry-export-pdf",
+    "description": "Export Statamic Entries as PDF",
+    "require": {
+        "statamic/cms": "^3.0.0",
+        "barryvdh/laravel-dompdf": "^1.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "beatwiz\\statamic-entry-export-pdf\\": "src"
+        }
+    },
+    "authors": [
+        {
+            "name": "Gustavo Silva"
+        }
+    ],
+    "support": {
+        "email": "dev@provider.pt"
+    },
+    "extra": {
+        "statamic": {
+            "name": "Export Entry as PDF",
+            "description": "Export Statamic Entries as PDF",
+            "editions": ["free"]
+        },
+        "laravel": {
+            "providers": [
+                "beatwiz\\statamic-entry-export-pdf\\ServiceProvider"
+            ]
+        }
+    }
+}
