@@ -1,6 +1,6 @@
 <?php
 
-namespace Beatwiz\StatamicEntryExportPdf;
+namespace ProviderPt\StatamicEntryExportPdf;
 
 use Statamic\Providers\AddonServiceProvider;
 
