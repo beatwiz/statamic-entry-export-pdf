@@ -1,4 +1,4 @@
-# Statamic Export
+# Statamic Entry Export as PDF
 
 This plugin exports your entries as PDF.
 
