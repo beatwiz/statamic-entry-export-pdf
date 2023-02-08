@@ -1,6 +1,6 @@
 <?php
 
-namespace Beatwiz\StatamicEntryExportPdf\Actions;
+namespace ProviderPt\StatamicEntryExportPdf\Actions;
 
 use Statamic\Actions\Action;
 
