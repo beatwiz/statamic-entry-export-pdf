@@ -7,9 +7,9 @@
         "barryvdh/laravel-dompdf": "^1.0.0"
     },
     "autoload": {
-        "providers": [
-            "Beatwiz\\StatamicEntryExportPdf\\ServiceProvider"
-        ]
+        "psr-4": {
+            "Beatwiz\\StatamicEntryExportPdf\\": "src"
+        }
     },
     "authors": [
         {
