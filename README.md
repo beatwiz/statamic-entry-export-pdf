@@ -8,5 +8,11 @@ Add the package using composer.
 composer beatwiz/statamic-entry-export-pdf
 ```
 
+## Optional
+Publish configuration file.
+```bash
+php artisan vendor:publish --tag=statamic-entry-export-pdf-config
+```
+
 # License 
 This plugin is published under the MIT license.
