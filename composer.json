@@ -27,7 +27,7 @@
         },
         "laravel": {
             "providers": [
-                "beatwiz\\statamic-entry-export-pdf\\ServiceProvider"
+                "beatwiz\\EntryExportPDF\\ServiceProvider"
             ]
         }
     }
