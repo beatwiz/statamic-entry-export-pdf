@@ -1,5 +1,5 @@
 {
-    "name": "beatwiz/statamic-entry-export-pdf",
+    "name": "provider-pt/statamic-entry-export-pdf",
     "description": "Export Statamic Entries as PDF",
     "license": "MIT",
     "require": {
@@ -8,7 +8,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Beatwiz\\StatamicEntryExportPdf\\": "src"
+            "ProviderPt\\StatamicEntryExportPdf\\": "src"
         }
     },
     "authors": [
@@ -27,7 +27,7 @@
         },
         "laravel": {
             "providers": [
-                "Beatwiz\\StatamicEntryExportPdf\\ServiceProvider"
+                "ProviderPt\\StatamicEntryExportPdf\\ServiceProvider"
             ]
         }
     }
