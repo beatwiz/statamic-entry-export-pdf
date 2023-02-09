@@ -14,6 +14,7 @@ use Statamic\Contracts\Taxonomies\Term;
 use Statamic\Fields\Field;
 use Statamic\Fields\Value;
 use Statamic\Fields\LabeledValue;
+use Statamic\Forms\Submission;
 
 class StatamicEntryExportPdf extends Action
 {
@@ -25,7 +26,7 @@ class StatamicEntryExportPdf extends Action
 
     public function visibleTo($item)
     {
-        return $item instanceof Entry &&
+        return ($item instanceof Entry  || $item instanceof Submission) &&
             isset($item->collection) &&
             isset($item->collection->handle) &&
             !in_array($item->collection->handle, config('statamic-entry-export-pdf.excluded_collections', []));
