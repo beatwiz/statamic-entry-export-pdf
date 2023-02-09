@@ -5,7 +5,7 @@ This plugin exports your entries as PDF.
 ## Installation
 Add the package using composer. 
 ```bash
-composer beatwiz/statamic-entry-export-pdf
+composer require beatwiz/statamic-entry-export-pdf
 ```
 
 ## Optional
