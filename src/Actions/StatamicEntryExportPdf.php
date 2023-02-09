@@ -26,10 +26,22 @@ class StatamicEntryExportPdf extends Action
 
     public function visibleTo($item)
     {
-        return ($item instanceof Entry  || $item instanceof Submission) &&
+        return ($item instanceof Entry &&
             isset($item->collection) &&
             isset($item->collection->handle) &&
-            !in_array($item->collection->handle, config('statamic-entry-export-pdf.excluded_collections', []));
+            !in_array(
+                $item->collection->handle,
+                config('statamic-entry-export-pdf.excluded_collections', [])
+            )
+            ||
+            $item instanceof Submission &&
+            isset($item->form) &&
+            isset($item->form->handle) &&
+            !in_array(
+                $item->form->handle,
+                config('statamic-entry-export-pdf.excluded_collections', [])
+            )
+        );
     }
 
     /**
@@ -47,18 +59,27 @@ class StatamicEntryExportPdf extends Action
 
         $headings = $entryFields->values();
 
-        $entries = $items->map(function (\Statamic\Entries\Entry $entry) use ($headings) {
+        $entries = $items->map(function ($entry) use ($headings) {
             return $headings->mapWithKeys(function ($heading) use ($entry) {
                 $value = $entry->augmentedValue($heading->handle());
                 return [$heading->display() => $this->toString($value)];
             });
         });
 
-        $pdf = Pdf::loadView('statamic-entry-export-pdf::pdf', [
-            'collection' => $firstEntry->collection(),
-            'entries' => $entries,
-        ]);
-        return $pdf->download('export_' . $firstEntry->collection()->handle() . '_' . date('Y_m_d_H:i') . '.pdf');
+
+        if ($firstEntry instanceof Entry) {
+            $pdf = Pdf::loadView('statamic-entry-export-pdf::pdf', [
+                'collection' => $firstEntry->collection,
+                'entries' => $entries,
+            ]);
+            return $pdf->download('export_' . $firstEntry->collection->handle . '_' . date('Y_m_d_H:i') . '.pdf');
+        } else if ($firstEntry instanceof Submission) {
+            $pdf = Pdf::loadView('statamic-entry-export-pdf::pdf', [
+                'collection' => $firstEntry->form,
+                'entries' => $entries,
+            ]);
+            return $pdf->download('export_' . $firstEntry->form->handle . '_' . date('Y_m_d_H:i') . '.pdf');
+        }
     }
 
     /**
