@@ -66,18 +66,19 @@ class StatamicEntryExportPdf extends Action
             });
         });
 
-
         if ($firstEntry instanceof Entry) {
             $pdf = Pdf::loadView('statamic-entry-export-pdf::pdf', [
                 'collection' => $firstEntry->collection,
                 'entries' => $entries,
             ]);
+            $pdf->setOptions(['isHtml5ParserEnabled', true]);
             return $pdf->download('export_' . $firstEntry->collection->handle . '_' . date('Y_m_d_H:i') . '.pdf');
         } else if ($firstEntry instanceof Submission) {
             $pdf = Pdf::loadView('statamic-entry-export-pdf::pdf', [
                 'collection' => $firstEntry->form,
                 'entries' => $entries,
             ]);
+            $pdf->setOptions(['isHtml5ParserEnabled', true]);
             return $pdf->download('export_' . $firstEntry->form->handle . '_' . date('Y_m_d_H:i') . '.pdf');
         }
     }
