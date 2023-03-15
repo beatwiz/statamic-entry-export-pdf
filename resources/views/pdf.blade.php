@@ -17,13 +17,13 @@
 
 <body>
     @foreach ($entries as $entry)
-        @foreach ($entry as $k => $d)
+        @foreach ($entry as $e)
             @if ($loop->first)
-                <h4>{{ $d }}</h4>
+                <h3>{{ $e['value'] }}</h3>
             @else
-                @if (!empty($d))
-                    <p><strong>{{ $k }}</strong></p>
-                    <p>{!! $d !!}</p>
+                @if (!empty($e))
+                    <div class="label">{{ $e['name'] }}</div>
+                    <div class="content">{!! $e['value'] !!}</div>
                 @endif
             @endif
         @endforeach
