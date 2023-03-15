@@ -62,7 +62,13 @@ class StatamicEntryExportPdf extends Action
         $entries = $items->map(function ($entry) use ($headings) {
             return $headings->mapWithKeys(function ($heading) use ($entry) {
                 $value = $entry->augmentedValue($heading->handle());
-                return [$heading->display() => $this->toString($value)];
+                return [
+                    $heading->handle() =>
+                    [
+                        'name' => $heading->display(),
+                        'value' => $this->toString($value)
+                    ]
+                ];
             });
         });
 
