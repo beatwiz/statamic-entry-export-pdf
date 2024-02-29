@@ -12,6 +12,9 @@
         .page-break {
             page-break-after: always;
         }
+        .bold {
+            font-weight: 700;
+        }
     </style>
 </head>
 
@@ -22,7 +25,7 @@
                 <h3>{{ $e['value'] }}</h3>
             @else
                 @if (!empty($e))
-                    <div class="label">{{ $e['name'] }}</div>
+                    <div class="label bold">{{ $e['name'] }}</div>
                     <div class="content">{!! $e['value'] !!}</div>
                 @endif
             @endif
