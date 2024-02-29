@@ -53,7 +53,7 @@ class StatamicEntryExportPdf extends Action
     {
         $firstEntry = $items->first();
         $entryFields = $firstEntry->blueprint()
-            ->sections()
+            ->tabs()
             ->flatMap(fn ($section) => $section->fields()->all())
             ->filter(fn (Field $field) => $this->shouldFieldBeIncluded($field));
 
