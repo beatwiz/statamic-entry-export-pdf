@@ -3,7 +3,7 @@
     "description": "Export Statamic Entries as PDF",
     "license": "MIT",
     "require": {
-        "statamic/cms": "^4.0.0",
+        "statamic/cms": "^5.0.0",
         "barryvdh/laravel-dompdf": "^2.0.0"
     },
     "autoload": {
@@ -29,6 +29,11 @@
             "providers": [
                 "Beatwiz\\StatamicEntryExportPdf\\ServiceProvider"
             ]
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "pixelfear/composer-dist-plugin": true
         }
     }
 }
