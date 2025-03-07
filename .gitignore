@@ -3,3 +3,11 @@ vendor
 mix-manifest.json
 vendor/
 node_modules/
+wp-content/uploads/
+wp-content/upgrade/
+wp-content/backup-db/
+wp-content/cache/
+wp-content/advanced-cache.php
+wp-content/wp-cache-config.php
+.htaccess
+wp-config.php
