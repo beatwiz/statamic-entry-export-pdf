@@ -26,21 +26,22 @@ class StatamicEntryExportPdf extends Action
 
     public function visibleTo($item)
     {
-        return ($item instanceof Entry &&
-            isset($item->collection) &&
-            isset($item->collection->handle) &&
-            !in_array(
-                $item->collection->handle,
-                config('statamic-entry-export-pdf.excluded_collections', [])
-            )
+        return (
+            ($item instanceof Entry &&
+                isset($item->collection) &&
+                isset($item->collection->handle) &&
+                !in_array(
+                    $item->collection->handle,
+                    config('statamic-entry-export-pdf.excluded_collections', [])
+                ))
             ||
-            $item instanceof Submission &&
-            isset($item->form) &&
-            isset($item->form->handle) &&
-            !in_array(
-                $item->form->handle,
-                config('statamic-entry-export-pdf.excluded_collections', [])
-            )
+            ($item instanceof Submission &&
+                isset($item->form) &&
+                isset($item->form->handle) &&
+                !in_array(
+                    $item->form->handle,
+                    config('statamic-entry-export-pdf.excluded_forms', [])
+                ))
         );
     }
 
@@ -51,6 +52,15 @@ class StatamicEntryExportPdf extends Action
      */
     public function run($items, $values)
     {
+        $maxItems = (int) config('statamic-entry-export-pdf.max_items', 100);
+        if ($maxItems > 0) {
+            $items = $items->take($maxItems);
+        }
+
+        if ($items->isEmpty()) {
+            return;
+        }
+
         $firstEntry = $items->first();
         $entryFields = $firstEntry->blueprint()
             ->tabs()
@@ -62,29 +72,25 @@ class StatamicEntryExportPdf extends Action
         $entries = $items->map(function ($entry) use ($headings) {
             return $headings->mapWithKeys(function ($heading) use ($entry) {
                 $value = $entry->augmentedValue($heading->handle());
+                $resolved = $this->toString($value);
                 return [
                     $heading->handle() =>
                     [
                         'name' => $heading->display(),
-                        'value' => $this->toString($value)
+                        'value' => $resolved['html'] ?? e($resolved['text']),
                     ]
                 ];
             });
         });
 
-        if ($firstEntry instanceof Entry) {
-            $pdf = Pdf::loadView('statamic-entry-export-pdf::pdf', [
-                'collection' => $firstEntry->collection,
-                'entries' => $entries,
-            ])->setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
-            return $pdf->download('export_' . $firstEntry->collection->handle . '_' . date('Y_m_d_H:i') . '.pdf');
-        } else if ($firstEntry instanceof Submission) {
-            $pdf = Pdf::loadView('statamic-entry-export-pdf::pdf', [
-                'collection' => $firstEntry->form,
-                'entries' => $entries,
-            ])->setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
-            return $pdf->download('export_' . $firstEntry->form->handle . '_' . date('Y_m_d_H:i') . '.pdf');
-        }
+        $source = $firstEntry instanceof Entry ? $firstEntry->collection : $firstEntry->form;
+
+        $pdf = Pdf::loadView('statamic-entry-export-pdf::pdf', [
+            'collection' => $source,
+            'entries' => $entries,
+        ])->setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
+
+        return $pdf->download('export_' . $source->handle . '_' . date('Y_m_d_H:i') . '.pdf');
     }
 
     /**
@@ -93,49 +99,56 @@ class StatamicEntryExportPdf extends Action
      * @param Field $field
      * @return bool
      */
-    protected function shouldFieldBeIncluded(Field $field): bool
+    private function shouldFieldBeIncluded(Field $field): bool
     {
-        return !in_array($field->type(), config('statamic-entry-export-pdf.excluded_field_types')) && !in_array($field->handle(), config('statamic-entry-export-pdf.excluded_field_names'));
+        return !in_array($field->type(), config('statamic-entry-export-pdf.excluded_field_types', [])) && !in_array($field->handle(), config('statamic-entry-export-pdf.excluded_field_names', []));
     }
 
-    private function toString($value)
+    private function toString($value): array
     {
+        $isRichText = false;
         if ($value instanceof Value) {
+            $fieldtype = $value->fieldtype();
+            $isRichText = $fieldtype && in_array($fieldtype->handle(), ['bard', 'markdown', 'textarea']);
             $value = $value->value();
         }
 
+        if ($isRichText && is_string($value)) {
+            return ['html' => strip_tags($value, '<p><br><strong><em><ul><ol><li><h1><h2><h3><h4><h5><h6><a><blockquote><code><pre><table><thead><tbody><tr><th><td>')];
+        }
+
         if ($value instanceof Carbon) {
-            return $value->format('d-m-Y H:i');
+            return ['text' => $value->format('d-m-Y H:i')];
         }
 
         if ($value instanceof Entry) {
-            return $value->get('title');
+            return ['text' => $value->get('title')];
         }
 
         if ($value instanceof User) {
-            return $value->name();
+            return ['text' => $value->name()];
         }
 
         if ($value instanceof Term) {
-            return $value->title();
+            return ['text' => $value->title()];
         }
 
         if ($value instanceof LabeledValue) {
-            return $value->label();
+            return ['text' => $value->label()];
         }
 
         if ($value instanceof Asset) {
-            return '<img width="100%" src="' . url($value->url()) . '">';
+            return ['html' => '<img width="100%" src="' . htmlspecialchars(url($value->url()), ENT_QUOTES, 'UTF-8') . '">'];
         }
 
         if (empty($value)) {
-            return null;
+            return ['text' => null];
         }
 
         if (is_array($value)) {
-            return json_encode($value);
+            return ['text' => json_encode($value)];
         }
 
-        return $value;
+        return ['text' => $value];
     }
 }

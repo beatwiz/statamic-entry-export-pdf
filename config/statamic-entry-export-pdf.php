@@ -10,5 +10,9 @@ return [
     ],
     'excluded_collections' => [
       // "example",
-    ]
+    ],
+    'excluded_forms' => [
+      // "example",
+    ],
+    'max_items' => 100
 ];
